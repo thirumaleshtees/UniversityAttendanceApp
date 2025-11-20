@@ -45,9 +45,33 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SplashScreen()
+            AccountStatusCheck()
         }
     }
+}
+
+@Composable
+fun AccountStatusCheck() {
+    val context = LocalContext.current as Activity
+    var showSplash by remember { mutableStateOf(true) }
+
+    DisposableEffect(Unit) {
+        val job = CoroutineScope(Dispatchers.Main).launch {
+            delay(3000)
+            showSplash = false
+        }
+        onDispose { job.cancel() }
+    }
+
+    if (showSplash) {
+        SplashScreen()
+
+    } else {
+        context.startActivity(Intent(context, LoginActivity::class.java))
+        context.finish()
+
+    }
+
 }
 
 
