@@ -1,6 +1,8 @@
 package tees.thirumalesh.universityattendanceapp
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -35,8 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlin.jvm.java
+import com.google.firebase.database.FirebaseDatabase
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,13 +51,19 @@ class LoginActivity : ComponentActivity() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen()
+}
+
 
 @Composable
 fun LoginScreen() {
     var useremail by remember { mutableStateOf("") }
     var userpassword by remember { mutableStateOf("") }
 
-    val context = LocalContext.current as Activity
+    val context = LocalContext.current.findActivity()
 
     Column(
         modifier = Modifier
@@ -104,7 +113,7 @@ fun LoginScreen() {
             {
 
                 Text(
-                    text = "Username",
+                    text = "Email",
                     color = colorResource(id = R.color.black),
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -139,15 +148,60 @@ fun LoginScreen() {
                     onClick = {
                         when {
                             useremail.isEmpty() -> {
-                                Toast.makeText(context, " We’ll need your email before moving ahead", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    " We’ll need your email before moving ahead",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
 
                             userpassword.isEmpty() -> {
-                                Toast.makeText(context, "We’ll need your password before moving ahead", Toast.LENGTH_SHORT)
+                                Toast.makeText(
+                                    context,
+                                    "We’ll need your password before moving ahead",
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                             }
 
                             else -> {
+
+                                val database = FirebaseDatabase.getInstance()
+                                val databaseReference = database.reference
+
+                                val sanitizedEmail = useremail.replace(".", ",")
+
+                                databaseReference.child("StudentsAccounts").child(sanitizedEmail)
+                                    .get()
+                                    .addOnSuccessListener { snapshot ->
+                                        if (snapshot.exists()) {
+                                            val chefData = snapshot.getValue(Student::class.java)
+                                            chefData?.let {
+
+                                                if (userpassword == it.password) {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Login Successfull",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                } else {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Incorrect Credentials",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "No User Found",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }.addOnFailureListener { exception ->
+                                        println("Error retrieving data: ${exception.message}")
+                                    }
 
                             }
 
@@ -183,7 +237,7 @@ fun LoginScreen() {
                     color = colorResource(id = R.color.p3),
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Black),
                     modifier = Modifier.clickable {
-                        context.startActivity(Intent(context, RegisterActivity::class.java))
+                        context!!.startActivity(Intent(context, RegisterActivity::class.java))
                         context.finish()
                     }
                 )
@@ -197,3 +251,18 @@ fun LoginScreen() {
     }
 
 }
+
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
+
+
+data class Student
+    (
+    var name: String = "",
+    var email: String = "",
+    var password: String = "",
+    var location: String = ""
+)

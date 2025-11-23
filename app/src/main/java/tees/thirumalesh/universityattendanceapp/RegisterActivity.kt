@@ -1,7 +1,6 @@
 package tees.thirumalesh.universityattendanceapp
 
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -38,7 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.database.FirebaseDatabase
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +50,12 @@ class RegisterActivity : ComponentActivity() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun RegistrationScreenPreview() {
+    RegistrationScreen()
+}
+
 
 @Composable
 fun RegistrationScreen() {
@@ -57,7 +64,7 @@ fun RegistrationScreen() {
     var userLocation by remember { mutableStateOf("") }
     var userpassword by remember { mutableStateOf("") }
 
-    val context = LocalContext.current as Activity
+    val context = LocalContext.current.findActivity()
 
     Column(
         modifier = Modifier
@@ -208,6 +215,43 @@ fun RegistrationScreen() {
 
                             else -> {
 
+                                val userData = Student(
+                                    name = userName,
+                                    email = useremail,
+                                    location = userLocation,
+                                    password = userpassword
+                                )
+
+
+                                val db = FirebaseDatabase.getInstance()
+                                val ref = db.getReference("StudentsAccounts")
+                                ref.child(userData.email.replace(".", ",")).setValue(userData)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
+
+                                            context!!.startActivity(
+                                                Intent(
+                                                    context,
+                                                    LoginActivity::class.java
+                                                )
+                                            )
+                                            (context).finish()
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "User Registration Failed: ${task.exception?.message}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        Toast.makeText(
+                                            context,
+                                            "User Registration Failed: ${exception.message}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                             }
 
                         }
@@ -243,7 +287,7 @@ fun RegistrationScreen() {
                     color = colorResource(id = R.color.p3),
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Black),
                     modifier = Modifier.clickable {
-                        context.startActivity(Intent(context, LoginActivity::class.java))
+                        context!!.startActivity(Intent(context, LoginActivity::class.java))
                         context.finish()
                     }
                 )
