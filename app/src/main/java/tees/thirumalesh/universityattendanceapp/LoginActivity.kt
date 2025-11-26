@@ -184,6 +184,10 @@ fun LoginScreen() {
                                                         "Login Successfull",
                                                         Toast.LENGTH_SHORT
                                                     ).show()
+
+                                                    context!!.startActivity(Intent(context,
+                                                        StudentHomeActivity::class.java))
+                                                    context.finish()
                                                 } else {
                                                     Toast.makeText(
                                                         context,
@@ -252,11 +256,7 @@ fun LoginScreen() {
 
 }
 
-fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}
+
 
 
 data class Student
