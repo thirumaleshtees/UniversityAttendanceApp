@@ -8,7 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="p1">#ffe588</color>
-    <color name="p2">#FF000000</color>
-    <color name="p3">#FFFFFFFF</color>
+    <color name="p1">#76267b</color>
+    <color name="p2">#50bf9e</color>
+
+    <color name="p3">#ffac01</color>
 </resources>

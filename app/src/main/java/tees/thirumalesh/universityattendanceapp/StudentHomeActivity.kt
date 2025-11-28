@@ -3,6 +3,7 @@ package tees.thirumalesh.universityattendanceapp
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -124,6 +125,12 @@ fun StudentHomeScreen() {
                         .padding(horizontal = 6.dp, vertical = 12.dp)
                         .clickable {
 
+                            context!!.startActivity(
+                                Intent(
+                                    context,
+                                    MarkAttendanceActivity::class.java
+                                )
+                            )
                         }
 
 
