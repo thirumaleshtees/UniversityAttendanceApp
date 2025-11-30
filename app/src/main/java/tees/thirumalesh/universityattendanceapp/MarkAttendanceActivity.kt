@@ -329,7 +329,7 @@ fun AttendanceFormScreen() {
                     isWithinGeofence(
                         currentLocation!!.latitude,
                         currentLocation!!.longitude,
-                        51.546898, -0.023793
+                        51.546898, -0.023793 //set your college location
                     )
                 isInsideCollege = isInLocation
 

@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.jvm.java
 
 
 class StudentHomeActivity : ComponentActivity() {
@@ -175,6 +176,13 @@ fun StudentHomeScreen() {
                         )
                         .padding(horizontal = 6.dp, vertical = 12.dp)
                         .clickable {
+
+                            context!!.startActivity(
+                                Intent(
+                                    context,
+                                    ViewAttendanceHistoryActivity::class.java
+                                )
+                            )
 
 
                         }
