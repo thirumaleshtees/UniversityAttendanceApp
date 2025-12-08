@@ -1,4 +1,4 @@
-package s3399337project.rohitrajmahendrakar.collegeattendance
+package tees.thirumalesh.universityattendanceapp
 
 import android.content.Context
 

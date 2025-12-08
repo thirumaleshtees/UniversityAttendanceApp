@@ -12,7 +12,6 @@ import com.google.firebase.database.ValueEventListener
 import java.time.LocalDate
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import s3399337project.rohitrajmahendrakar.collegeattendance.CollegePreferences
 
 class AttendanceViewModel : ViewModel() {
 

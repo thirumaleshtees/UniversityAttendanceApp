@@ -39,7 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.jvm.java
 
 
 class StudentHomeActivity : ComponentActivity() {
@@ -60,7 +59,8 @@ fun StudentHomeScreen() {
             .fillMaxSize()
             .background(
                 color = colorResource(id = R.color.white),
-            ).padding(WindowInsets.systemBars.asPaddingValues()),
+            )
+            .padding(WindowInsets.systemBars.asPaddingValues()),
     ) {
 
         Row(
@@ -193,7 +193,7 @@ fun StudentHomeScreen() {
                             .size(64.dp)
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.college),
-                        contentDescription = "Add\nStudents"
+                        contentDescription = "Track Attendance"
                     )
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -228,8 +228,12 @@ fun StudentHomeScreen() {
                         )
                         .padding(horizontal = 6.dp, vertical = 12.dp)
                         .clickable {
-
-
+                            context!!.startActivity(
+                                Intent(
+                                    context,
+                                    AttendancePercentageActivity::class.java
+                                )
+                            )
                         }
 
                 ) {
@@ -238,7 +242,7 @@ fun StudentHomeScreen() {
                             .size(64.dp)
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.college),
-                        contentDescription = "Manage\nAttendance"
+                        contentDescription = "Total\nAttendance"
                     )
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -280,6 +284,12 @@ fun StudentHomeScreen() {
                         .padding(horizontal = 6.dp, vertical = 12.dp)
                         .clickable {
 
+                            context!!.startActivity(
+                                Intent(
+                                    context,
+                                    CourseAttendanceActivity::class.java
+                                )
+                            )
 
                         }
 
@@ -290,7 +300,7 @@ fun StudentHomeScreen() {
                             .size(64.dp)
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.college),
-                        contentDescription = "Delete\nAttendance"
+                        contentDescription = "Attendance\nBy Course"
                     )
 
                     Spacer(modifier = Modifier.height(10.dp))

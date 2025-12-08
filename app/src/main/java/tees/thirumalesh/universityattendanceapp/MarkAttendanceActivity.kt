@@ -70,7 +70,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.FirebaseDatabase
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
-import s3399337project.rohitrajmahendrakar.collegeattendance.CollegePreferences
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -324,12 +323,13 @@ fun AttendanceFormScreen() {
                 Text("Your Location : Pending")
             } else {
 
+//                51.546898, -0.023793
 
                 val isInLocation =
                     isWithinGeofence(
                         currentLocation!!.latitude,
                         currentLocation!!.longitude,
-                        51.546898, -0.023793 //set your college location
+                        51.546898, -0.023793 //set University location
                     )
                 isInsideCollege = isInLocation
 
@@ -568,7 +568,7 @@ fun isWithinGeofence(
     currentLng: Double,
     collegeLat: Double,
     collegeLng: Double,
-    radiusInMeters: Float = 100f // default geofence radius
+    radiusInMeters: Float = 300f // default geofence radius
 ): Boolean {
     val collegeLocation = Location("College").apply {
         latitude = collegeLat
