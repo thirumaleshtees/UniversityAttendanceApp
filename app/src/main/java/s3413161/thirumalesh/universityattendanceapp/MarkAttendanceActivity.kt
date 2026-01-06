@@ -1,4 +1,4 @@
-package tees.thirumalesh.universityattendanceapp
+package s3413161.thirumalesh.universityattendanceapp
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -46,6 +46,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -102,10 +103,7 @@ fun MarkAttendanceScreen() {
 
 @Composable
 fun AttendanceFormScreen() {
-//    var selectedCourse by remember { mutableStateOf("") }
-    var classTime by remember { mutableStateOf("") }
     var attendanceStatus by remember { mutableStateOf("Present") }
-    val gpsStatus by remember { mutableStateOf(true) }
     var confirmationMessage by remember { mutableStateOf("") }
 
     val attendanceOptions = listOf("Present", "Absent", "Late")
@@ -128,13 +126,25 @@ fun AttendanceFormScreen() {
 
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
 
+    var universityLocation by remember {
+        mutableStateOf<UniversityLocation?>(null)
+    }
+
+    LaunchedEffect(Unit) {
+        fetchUniversityLocation { uniLocation ->
+            universityLocation = uniLocation
+            Log.e(
+                "Test",
+                "Fetched University LatLng - ${uniLocation?.latitude}, ${uniLocation?.longitude}"
+            )
+        }
+    }
+
 
     val datePicker = DatePickerDialog(
         context,
         { _, y, m, d ->
-//            expiryDate = String.format("%04d-%02d-%02d", y, m + 1, d)
             attendanceDate = String.format("%02d-%02d-%04d", d, m + 1, y)
-
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
@@ -150,7 +160,6 @@ fun AttendanceFormScreen() {
     ) { isGranted ->
         if (isGranted) {
 
-//            showLocationDialog = true
 
             getCurrentLocation(context, fusedLocationClient, cameraPositionState) { location ->
                 currentLocation = location
@@ -179,7 +188,6 @@ fun AttendanceFormScreen() {
         ) {
             permissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
         } else {
-//            showLocationDialog = true
 
             getCurrentLocation(context, fusedLocationClient, cameraPositionState) { location ->
                 currentLocation = location
@@ -249,7 +257,6 @@ fun AttendanceFormScreen() {
                     .padding(vertical = 8.dp)
                     .height(50.dp)
                     .clickable {
-                        // Handle the click event, e.g., show a date picker
                     }
                     .background(Color.LightGray, MaterialTheme.shapes.medium)
                     .padding(horizontal = 16.dp),
@@ -260,7 +267,7 @@ fun AttendanceFormScreen() {
                     color = if (attendanceDate.isEmpty()) Color.Gray else Color.Black
                 )
                 Icon(
-                    imageVector = Icons.Default.DateRange, // Replace with your desired icon
+                    imageVector = Icons.Default.DateRange,
                     contentDescription = "Date Icon",
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
@@ -323,22 +330,20 @@ fun AttendanceFormScreen() {
                 Text("Your Location : Pending")
             } else {
 
-//                51.546898, -0.023793
 
-                val isInLocation =
-                    isWithinGeofence(
-                        currentLocation!!.latitude,
-                        currentLocation!!.longitude,
-                        51.546898, -0.023793 //set University location
-                    )
-                isInsideCollege = isInLocation
+                val isInLocation = isWithinGeofence(
+                    currentLocation!!.latitude,
+                    currentLocation!!.longitude,
+                    universityLocation!!.latitude.toDouble(),
+                    universityLocation!!.longitude.toDouble()
+                )
 
                 if (isInLocation) {
                     Text("Your Location : ✅ Inside College")
                 } else {
                     Text("Your Location : ❌ Out of College")
-
                 }
+
             }
 
             if (showLocationDialog) {
@@ -351,7 +356,6 @@ fun AttendanceFormScreen() {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Submit Button
             Button(
                 onClick = {
 
@@ -405,6 +409,30 @@ fun AttendanceFormScreen() {
         }
     }
 }
+
+fun fetchUniversityLocation(
+    onResult: (UniversityLocation?) -> Unit
+) {
+    val ref = FirebaseDatabase.getInstance()
+        .getReference("UniversityLocation")
+
+    ref.get()
+        .addOnSuccessListener { snapshot ->
+            val location = snapshot.getValue(UniversityLocation::class.java)
+            onResult(location)
+        }
+        .addOnFailureListener {
+            onResult(null)
+        }
+}
+
+
+data class UniversityLocation(
+    val latitude: String = "0.0",
+    val longitude: String = "0.0",
+    val radius: Int = 100
+)
+
 
 fun getCurrentLocation(
     context: Context,
@@ -595,7 +623,7 @@ data class AttendanceData(
 private fun markAttendance(attendanceData: AttendanceData, activityContext: Context) {
 
     try {
-        val userEmail = CollegePreferences.getStudentEmail(activityContext)
+        val userEmail = UniversityPreferences.getStudentEmail(activityContext)
         val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
         val orderId = dateFormat.format(Date())
 

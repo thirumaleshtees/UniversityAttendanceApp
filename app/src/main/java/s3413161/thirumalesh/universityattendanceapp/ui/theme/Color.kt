@@ -1,4 +1,4 @@
-package tees.thirumalesh.universityattendanceapp.ui.theme
+package s3413161.thirumalesh.universityattendanceapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

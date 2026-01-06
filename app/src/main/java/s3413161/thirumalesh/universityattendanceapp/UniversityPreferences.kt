@@ -1,16 +1,17 @@
-package tees.thirumalesh.universityattendanceapp
+package s3413161.thirumalesh.universityattendanceapp
 
 import android.content.Context
+import androidx.core.content.edit
 
 
-
-object CollegePreferences {
+object UniversityPreferences {
 
     private const val PREF_NAME = "COLLEGE_APP_PREFS"
     private const val KEY_LOGIN_STATUS = "KEY_LOGIN_STATUS"
     private const val KEY_STUDENT_NAME = "KEY_STUDENT_NAME"
     private const val KEY_STUDENT_EMAIL = "KEY_STUDENT_EMAIL"
     private const val KEY_STUDENT_PHOTO = "KEY_STUDENT_PHOTO"
+    private const val KEY_STUDENT_CLASS = "KEY_STUDENT_CLASS"
 
     fun setLoginStatus(context: Context, isLoggedIn: Boolean) {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -44,11 +45,23 @@ object CollegePreferences {
 
     fun setStudentPhoto(context: Context, photoUrl: String) {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putString(KEY_STUDENT_PHOTO, photoUrl).apply()
+        prefs.edit { putString(KEY_STUDENT_PHOTO, photoUrl) }
     }
 
     fun getStudentPhoto(context: Context): String {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         return prefs.getString(KEY_STUDENT_PHOTO, "") ?: ""
     }
+
+    fun setStudentClass(context: Context, photoUrl: String) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit { putString(KEY_STUDENT_CLASS, photoUrl) }
+    }
+
+    fun getStudentClass(context: Context): String {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(KEY_STUDENT_CLASS, "") ?: ""
+    }
+
+
 }

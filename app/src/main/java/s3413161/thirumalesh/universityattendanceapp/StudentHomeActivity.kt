@@ -1,4 +1,4 @@
-package tees.thirumalesh.universityattendanceapp
+package s3413161.thirumalesh.universityattendanceapp
 
 import android.app.Activity
 import android.content.Context
@@ -75,9 +75,10 @@ fun StudentHomeScreen() {
             Text(
                 modifier = Modifier
                     .padding(12.dp),
-                text = "Home",
-                color = Color.White,
+                text = "Student Home",
+                color = Color.Black,
                 fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
 
@@ -88,8 +89,7 @@ fun StudentHomeScreen() {
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-//                        context.startActivity(Intent(context, ContactUsActivity::class.java))
-
+                        context!!.startActivity(Intent(context, ContactUsActivity::class.java))
                     },
                 painter = painterResource(id = R.drawable.telephone),
                 contentDescription = "ContactUs"
@@ -140,7 +140,7 @@ fun StudentHomeScreen() {
                         modifier = Modifier
                             .size(64.dp)
                             .align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.college),
+                        painter = painterResource(id = R.drawable.ic_mark_attendance),
                         contentDescription = "Enter New\nAttendance"
                     )
 
@@ -192,7 +192,7 @@ fun StudentHomeScreen() {
                         modifier = Modifier
                             .size(64.dp)
                             .align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.college),
+                        painter = painterResource(id = R.drawable.ic_track_attendance),
                         contentDescription = "Track Attendance"
                     )
 
@@ -241,7 +241,7 @@ fun StudentHomeScreen() {
                         modifier = Modifier
                             .size(64.dp)
                             .align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.college),
+                        painter = painterResource(id = R.drawable.ic_total_attendance),
                         contentDescription = "Total\nAttendance"
                     )
 
@@ -299,7 +299,7 @@ fun StudentHomeScreen() {
                         modifier = Modifier
                             .size(64.dp)
                             .align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.college),
+                        painter = painterResource(id = R.drawable.ic_attendance_by_course),
                         contentDescription = "Attendance\nBy Course"
                     )
 
@@ -335,6 +335,12 @@ fun StudentHomeScreen() {
                         )
                         .clickable {
 
+                            context!!.startActivity(
+                                Intent(
+                                    context,
+                                    GraphAnalysisActivity::class.java
+                                )
+                            )
 
                         }
                         .padding(horizontal = 6.dp, vertical = 12.dp)
@@ -345,7 +351,7 @@ fun StudentHomeScreen() {
                         modifier = Modifier
                             .size(64.dp)
                             .align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.college),
+                        painter = painterResource(id = R.drawable.ic_graph_analysis),
                         contentDescription = "View\nSummary"
                     )
 
@@ -382,6 +388,12 @@ fun StudentHomeScreen() {
                         .padding(horizontal = 6.dp, vertical = 12.dp)
                         .clickable {
 
+                            context!!.startActivity(
+                                Intent(
+                                    context,
+                                    ProfileActivity::class.java
+                                )
+                            )
 
                         }
 
@@ -390,7 +402,7 @@ fun StudentHomeScreen() {
                         modifier = Modifier
                             .size(64.dp)
                             .align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.college),
+                        painter = painterResource(id = R.drawable.ic_profile),
                         contentDescription = "Access\nProfile"
                     )
 

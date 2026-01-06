@@ -1,6 +1,5 @@
-package tees.thirumalesh.universityattendanceapp.ui.theme
+package s3413161.thirumalesh.universityattendanceapp.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

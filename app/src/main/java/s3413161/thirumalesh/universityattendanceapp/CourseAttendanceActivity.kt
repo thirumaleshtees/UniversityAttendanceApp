@@ -1,4 +1,4 @@
-package tees.thirumalesh.universityattendanceapp
+package s3413161.thirumalesh.universityattendanceapp
 
 
 import android.app.Activity
@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,7 +55,7 @@ class CourseAttendanceActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AttendancePercentageByCourseScreen(email = CollegePreferences.getStudentEmail(this))
+            AttendancePercentageByCourseScreen(email = UniversityPreferences.getStudentEmail(this))
         }
     }
 }
@@ -180,13 +179,13 @@ fun AttendancePercentageByCourseScreen(email: String) {
 
                                 Spacer(modifier = Modifier.width(12.dp))
 
-                                if (percentage > 80) {
+                                if (percentage > 75) {
                                     Text(
                                         text = "Good Attendance",
                                         color = Color(0xFF4CAF50),
                                         modifier = Modifier
                                     )
-                                } else if (percentage < 80 && percentage > 40) {
+                                } else if (percentage in 40.0..75.0) {
                                     Text(
                                         text = "Average Attendance",
                                         color = Color(0xFFFFA000),
@@ -220,7 +219,9 @@ fun AttendancePercentageByCourseScreen(email: String) {
 
 
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
                     text = "No Attendance Marked",
                     fontSize = 18.sp,
                     textAlign = TextAlign.Center,
@@ -275,81 +276,3 @@ fun AttendanceBar(total: Int, present: Int) {
 }
 
 
-@Composable
-fun Bar(label: String, value: Int, color: Color, max: Int) {
-    val heightRatio = if (max > 0) value.toFloat() / max else 0f
-    val animatedHeight by animateFloatAsState(targetValue = heightRatio, label = "Bar Height")
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Color.LightGray)
-    ) {
-        Box(
-            modifier = Modifier
-                .width((animatedHeight * 100).dp)
-                .height(20.dp)
-                .background(color, shape = RoundedCornerShape(4.dp))
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            "$label - ($value)",
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-
-@Composable
-fun AttendancePercentageByCourseScreenOld(email: String) {
-    val percentageMap = remember { mutableStateMapOf<String, Double>() }
-
-
-
-    LaunchedEffect(email) {
-        val emailKey = email.replace(".", ",")
-        val ref = FirebaseDatabase.getInstance().getReference("Attendance").child(emailKey)
-
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val map = mutableMapOf<String, Pair<Int, Int>>() // course -> (present, total)
-
-                for (child in snapshot.children) {
-                    val data = child.getValue(AttendanceData::class.java)
-                    data?.let {
-                        val current = map[it.courseName] ?: (0 to 0)
-                        val present = current.first + if (it.status == "Present") 1 else 0
-                        val total = current.second + 1
-                        map[it.courseName] = (present to total)
-                    }
-                }
-
-                percentageMap.clear()
-                percentageMap.putAll(map.mapValues {
-                    (it.value.first * 100.0) / it.value.second
-                })
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Attendance Percentage by Course", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
-
-        percentageMap.forEach { (course, percent) ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text("Course: $course", fontWeight = FontWeight.Bold)
-                    Text("Attendance: ${"%.2f".format(percent)}%")
-                }
-            }
-        }
-    }
-}

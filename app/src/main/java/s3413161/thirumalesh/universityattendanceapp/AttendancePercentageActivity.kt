@@ -1,4 +1,4 @@
-package tees.thirumalesh.universityattendanceapp
+package s3413161.thirumalesh.universityattendanceapp
 
 import android.app.Activity
 import android.os.Bundle
@@ -52,7 +52,7 @@ class AttendancePercentageActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            OverallAttendancePercentageScreen(email = CollegePreferences.getStudentEmail(this))
+            OverallAttendancePercentageScreen(email = UniversityPreferences.getStudentEmail(this))
         }
     }
 }

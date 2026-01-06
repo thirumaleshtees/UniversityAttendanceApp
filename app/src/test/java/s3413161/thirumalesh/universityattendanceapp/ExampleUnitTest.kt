@@ -1,4 +1,4 @@
-package tees.thirumalesh.universityattendanceapp
+package s3413161.thirumalesh.universityattendanceapp
 
 import org.junit.Test
 

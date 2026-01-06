@@ -1,15 +1,16 @@
 {
   "project_info": {
     "project_number": "250847932296",
+    "firebase_url": "https://universityattendanceapp-2e178-default-rtdb.firebaseio.com",
     "project_id": "universityattendanceapp-2e178",
     "storage_bucket": "universityattendanceapp-2e178.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:250847932296:android:76654e2f8f5b8ceb78943d",
+        "mobilesdk_app_id": "1:250847932296:android:533d9cc1c2bfa90778943d",
         "android_client_info": {
-          "package_name": "tees.thirumalesh.universityattendanceapp"
+          "package_name": "s3413161.thirumalesh.universityattendanceapp"
         }
       },
       "oauth_client": [],

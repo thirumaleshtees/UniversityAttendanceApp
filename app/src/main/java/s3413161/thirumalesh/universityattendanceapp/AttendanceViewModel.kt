@@ -1,4 +1,4 @@
-package tees.thirumalesh.universityattendanceapp
+package s3413161.thirumalesh.universityattendanceapp
 
 
 import android.content.Context
@@ -26,7 +26,7 @@ class AttendanceViewModel : ViewModel() {
         context: Context,
         onResult: (List<AttendanceData>) -> Unit
     ) {
-        val email = CollegePreferences.getStudentEmail(context).replace(".", ",")
+        val email = UniversityPreferences.getStudentEmail(context).replace(".", ",")
         val reference = FirebaseDatabase.getInstance().getReference("Attendance").child(email)
 
         reference.addListenerForSingleValueEvent(object : ValueEventListener {

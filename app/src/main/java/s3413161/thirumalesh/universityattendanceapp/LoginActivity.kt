@@ -1,5 +1,4 @@
-package tees.thirumalesh.universityattendanceapp
-
+package s3413161.thirumalesh.universityattendanceapp
 
 import android.content.Intent
 import android.os.Bundle
@@ -19,9 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -41,36 +38,36 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.database.FirebaseDatabase
 
-class RegisterActivity : ComponentActivity() {
+class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            RegistrationScreen()
+            LoginScreen()
         }
+
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun RegistrationScreenPreview() {
-    RegistrationScreen()
+fun LoginScreenPreview() {
+    LoginScreen()
 }
 
 
 @Composable
-fun RegistrationScreen() {
-    var userName by remember { mutableStateOf("") }
+fun LoginScreen() {
     var useremail by remember { mutableStateOf("") }
-    var userLocation by remember { mutableStateOf("") }
     var userpassword by remember { mutableStateOf("") }
 
     val context = LocalContext.current.findActivity()
+
+    val context1 = LocalContext.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.white))
-            .verticalScroll(rememberScrollState())
             .padding(WindowInsets.systemBars.asPaddingValues()),
     ) {
 
@@ -81,7 +78,7 @@ fun RegistrationScreen() {
             Spacer(modifier = Modifier.height(100.dp))
 
             Text(
-                text = "Register",
+                text = "Login",
                 color = colorResource(id = R.color.p1),
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier
@@ -90,7 +87,7 @@ fun RegistrationScreen() {
             )
 
             Text(
-                text = "Hello, Welcome!",
+                text = "Hello, Welcome Back!",
                 color = colorResource(id = R.color.p1),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
@@ -109,30 +106,13 @@ fun RegistrationScreen() {
                         color = colorResource(id = R.color.white),
                         shape = RoundedCornerShape(6.dp)
                     )
-                    .padding(16.dp)
+                    .padding(16.dp),
 
-            )
+                )
             {
 
-                Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Username",
-                    color = colorResource(id = R.color.black),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    value = userName,
-                    onValueChange = { userName = it }
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Email Id",
+                    text = "Email",
                     color = colorResource(id = R.color.black),
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -146,21 +126,6 @@ fun RegistrationScreen() {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = "Location",
-                    color = colorResource(id = R.color.black),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    value = userLocation,
-                    onValueChange = { userLocation = it }
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = "Password",
@@ -181,17 +146,12 @@ fun RegistrationScreen() {
                 Button(
                     onClick = {
                         when {
-                            userName.isEmpty() -> {
+                            useremail.isEmpty() -> {
                                 Toast.makeText(
                                     context,
-                                    "We’ll need your username before moving ahead",
+                                    " We’ll need your email before moving ahead",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                            }
-
-                            useremail.isEmpty() -> {
-                                Toast.makeText(context, "We’ll need your email before moving ahead", Toast.LENGTH_SHORT)
-                                    .show()
                             }
 
                             userpassword.isEmpty() -> {
@@ -203,55 +163,57 @@ fun RegistrationScreen() {
                                     .show()
                             }
 
-                            userLocation.isEmpty() -> {
-                                Toast.makeText(
-                                    context,
-                                    "We’ll need your location before moving ahead",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
-
-
                             else -> {
 
-                                val userData = Student(
-                                    name = userName,
-                                    email = useremail,
-                                    location = userLocation,
-                                    password = userpassword
-                                )
+                                val database = FirebaseDatabase.getInstance()
+                                val databaseReference = database.reference
+
+                                val sanitizedEmail = useremail.replace(".", ",")
+
+                                databaseReference.child("StudentsAccounts").child(sanitizedEmail)
+                                    .get()
+                                    .addOnSuccessListener { snapshot ->
+                                        if (snapshot.exists()) {
+                                            val studentData = snapshot.getValue(Student::class.java)
+                                            studentData?.let {
+
+                                                if (userpassword == it.password) {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Login Successfull",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+
+                                                    UniversityPreferences.setLoginStatus(context1, true)
+                                                    UniversityPreferences.setStudentEmail(context1, studentData.email)
+                                                    UniversityPreferences.setStudentName(context1, studentData.name)
+                                                    UniversityPreferences.setStudentPhoto(context1, studentData.photoUrl)
+                                                    UniversityPreferences.setStudentClass(context1, studentData.section)
 
 
-                                val db = FirebaseDatabase.getInstance()
-                                val ref = db.getReference("StudentsAccounts")
-                                ref.child(userData.email.replace(".", ",")).setValue(userData)
-                                    .addOnCompleteListener { task ->
-                                        if (task.isSuccessful) {
-                                            Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
 
-                                            context!!.startActivity(
-                                                Intent(
-                                                    context,
-                                                    LoginActivity::class.java
-                                                )
-                                            )
-                                            (context).finish()
+                                                    context!!.startActivity(Intent(context,
+                                                        StudentHomeActivity::class.java))
+                                                    context.finish()
+                                                } else {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Incorrect Credentials",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
                                         } else {
                                             Toast.makeText(
                                                 context,
-                                                "User Registration Failed: ${task.exception?.message}",
+                                                "No User Found",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }
+                                    }.addOnFailureListener { exception ->
+                                        println("Error retrieving data: ${exception.message}")
                                     }
-                                    .addOnFailureListener { exception ->
-                                        Toast.makeText(
-                                            context,
-                                            "User Registration Failed: ${exception.message}",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
+
                             }
 
                         }
@@ -264,10 +226,9 @@ fun RegistrationScreen() {
                         contentColor = colorResource(id = R.color.white)
                     )
                 ) {
-                    Text("Register")
+                    Text("Continue")
                 }
             }
-
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -277,25 +238,39 @@ fun RegistrationScreen() {
                 modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
             ) {
                 Text(
-                    text = "Already a member? ",
+                    text = "Not a member yet? ",
                     color = colorResource(id = R.color.p1),
                     style = MaterialTheme.typography.bodyLarge,
                 )
 
                 Text(
-                    text = "Login now",
+                    text = "Join now",
                     color = colorResource(id = R.color.p3),
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Black),
                     modifier = Modifier.clickable {
-                        context!!.startActivity(Intent(context, LoginActivity::class.java))
+                        context!!.startActivity(Intent(context, RegisterActivity::class.java))
                         context.finish()
                     }
                 )
 
             }
 
+            Spacer(modifier = Modifier.height(24.dp))
+
 
         }
     }
 
 }
+
+
+
+
+data class Student
+    (
+    var name: String = "",
+    var email: String = "",
+    var password: String = "",
+    var section: String = "",
+    var photoUrl: String = ""
+)

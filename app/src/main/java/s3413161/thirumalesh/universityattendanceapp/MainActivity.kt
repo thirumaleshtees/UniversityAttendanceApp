@@ -1,4 +1,4 @@
-package tees.thirumalesh.universityattendanceapp
+package s3413161.thirumalesh.universityattendanceapp
 
 
 import android.app.Activity
@@ -67,8 +67,14 @@ fun AccountStatusCheck() {
         SplashScreen()
 
     } else {
-        context.startActivity(Intent(context, LoginActivity::class.java))
-        context.finish()
+        if(UniversityPreferences.getLoginStatus(context))
+        {
+            context.startActivity(Intent(context, StudentHomeActivity::class.java))
+            context.finish()
+        }else{
+            context.startActivity(Intent(context, LoginActivity::class.java))
+            context.finish()
+        }
 
     }
 

@@ -1,4 +1,4 @@
-package tees.thirumalesh.universityattendanceapp
+package s3413161.thirumalesh.universityattendanceapp
 
 import android.app.Activity
 import android.os.Build
@@ -131,7 +131,6 @@ fun AttendanceHistoryScreen(viewModel: AttendanceViewModel) {
                     ) {
                         date.forEach { product ->
                             Box(modifier = Modifier.weight(1f)) {
-//                            StockItemCard(product)
                                 val records = attendanceMap.value[product]
 
                                 Card(
